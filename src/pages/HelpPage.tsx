@@ -72,6 +72,9 @@ export default function HelpPage() {
 
       <Card id="card-changelog" title="更新履歴" icon="update">
         <ul className="text-sm text-gray-700 dark:text-gray-300 space-y-1">
+          <li>v1.1.2 - アプリ名を「cab-nabi」から「cab-log」に変更しました。それに従いurlも変更しました。</li>
+          <li>v1.0.2 - 一部のユーザーでGoogleでのログインができない問題を修正しました。</li>
+          <li>v1.0.1 - Googleでのログインができない問題を修正しました</li>
           <li>v1.0.0 - 初回リリース（ホーム・価格入力・履歴・設定・ヘルプ画面を実装）</li>
         </ul>
       </Card>

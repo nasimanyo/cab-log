@@ -1,5 +1,5 @@
 import { Suspense, lazy } from 'react'
-import { HashRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import MainLayout from '@/layouts/MainLayout'
 
 const HomePage = lazy(() => import('@/pages/HomePage'))
@@ -19,7 +19,7 @@ function PageLoading() {
 
 export default function App() {
   return (
-    <HashRouter>
+    <BrowserRouter>
       <Suspense fallback={<PageLoading />}>
         <Routes>
           <Route element={<MainLayout />}>
@@ -32,6 +32,6 @@ export default function App() {
           </Route>
         </Routes>
       </Suspense>
-    </HashRouter>
+    </BrowserRouter>
   )
 }

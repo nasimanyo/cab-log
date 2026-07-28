@@ -28,7 +28,7 @@ export default function InputPage() {
   })
 
   useEffect(() => {
-    document.title = 'カブナビ | 価格入力'
+    document.title = 'カブログ | 価格入力'
   }, [])
 
   const persistBuyPrice = useDebouncedCallback((text: string) => {

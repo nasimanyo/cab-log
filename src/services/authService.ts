@@ -12,7 +12,7 @@ export const authService = {
   /** 4. login: Googleログインを実行する */
   async login(): Promise<void> {
     if (!supabase) {
-      throw new AppError('AUTH001', 'Supabase未設定のため、Googleログインは利用できません。')
+      throw new AppError('AUTH001', '運営者が無効化しているため、Googleログインは利用できません。')
     }
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',

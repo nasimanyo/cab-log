@@ -10,7 +10,7 @@ import { syncService } from '@/services/syncService'
 import { exportService } from '@/services/exportService'
 import { AppError } from '@/types'
 
-const APP_VERSION = '1.0.0'
+const APP_VERSION = '1.1.0'
 
 export default function SettingsPage() {
   const { toast, showToast, clearToast } = useToast()

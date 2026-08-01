@@ -14,7 +14,7 @@ export default function Header() {
       <div className="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="material-symbols-outlined text-2xl">eco</span>
-          <span className="font-black text-lg tracking-tight">カブナビ</span>
+          <span className="font-black text-lg tracking-tight">カブログ</span>
         </div>
         <div className="flex items-center gap-2 text-xs">
           <Link

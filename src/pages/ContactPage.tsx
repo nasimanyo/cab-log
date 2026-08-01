@@ -54,7 +54,7 @@ export default function ContactPage() {
   }
 
   const handleSubmit = () => {
-    const subject = `[cab-nabi] ${CATEGORY_LABEL[form.category] ?? 'お問い合わせ'}`
+    const subject = `[カブログ] ${CATEGORY_LABEL[form.category] ?? 'お問い合わせ'}`
     const body = [
       `お名前: ${form.name}`,
       `メールアドレス: ${form.email}`,

@@ -26,7 +26,7 @@ const CATEGORY_LABEL: Record<string, string> = {
   other: 'その他'
 }
 
-const CONTACT_EMAIL = 'contact@cab-nabi.app'
+const CONTACT_EMAIL = 'cab.log.jp@gmail.com'
 
 export default function ContactPage() {
   const [form, setForm] = useState<ContactFormState>(defaultForm)
@@ -95,7 +95,7 @@ export default function ContactPage() {
                 value={form.name}
                 onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
                 className="input-field"
-                placeholder="例: たなか しん"
+                placeholder="例: かぶろぐ　たろう"
               />
               {errors.name && <p className="text-xs text-red-600">{errors.name}</p>}
             </div>

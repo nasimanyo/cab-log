@@ -8,6 +8,8 @@ const HistoryListPage = lazy(() => import('@/pages/HistoryListPage'))
 const HistoryDetailPage = lazy(() => import('@/pages/HistoryDetailPage'))
 const SettingsPage = lazy(() => import('@/pages/SettingsPage'))
 const HelpPage = lazy(() => import('@/pages/HelpPage'))
+const PrivacyPolicyPage = lazy(() => import('@/pages/PrivacyPolicyPage'))
+const TermsPage = lazy(() => import('@/pages/TermsPage'))
 
 function PageLoading() {
   return (
@@ -29,6 +31,8 @@ export default function App() {
             <Route path="/history/:id" element={<HistoryDetailPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/help" element={<HelpPage />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
           </Route>
         </Routes>
       </Suspense>

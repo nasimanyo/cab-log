@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import Card from '@/components/Card'
 import Toast from '@/components/Toast'
 import { useToast } from '@/hooks/useToast'
@@ -164,6 +165,20 @@ export default function SettingsPage() {
             <span className="font-medium text-right text-xs text-gray-400 max-w-[60%]">
               カブ価予測ロジックは Turnip-Calculator (MIT License) を参考にしています
             </span>
+          </li>
+          <li className="py-2 flex justify-between items-center gap-2">
+            <span className="text-gray-500 dark:text-gray-400">ヘルプ・法務</span>
+            <div className="flex flex-wrap justify-end gap-2">
+              <Link to="/help" className="text-xs text-brand-600 dark:text-brand-400 font-medium">
+                ヘルプ
+              </Link>
+              <Link to="/privacy-policy" className="text-xs text-brand-600 dark:text-brand-400 font-medium">
+                プライバシー
+              </Link>
+              <Link to="/terms" className="text-xs text-brand-600 dark:text-brand-400 font-medium">
+                利用規約
+              </Link>
+            </div>
           </li>
         </ul>
       </Card>

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import Card from '@/components/Card'
 
 interface FaqItem {
@@ -20,7 +21,12 @@ export default function HelpPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="font-bold text-lg">ヘルプ</h1>
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="font-bold text-lg">ヘルプ</h1>
+        <Link to="/privacy-policy" className="text-sm text-brand-600 dark:text-brand-400 font-medium">
+          プライバシー
+        </Link>
+      </div>
 
       <Card id="card-about-turnip" title="カブについて" icon="eco">
         <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -65,9 +71,21 @@ export default function HelpPage() {
       </Card>
 
       <Card id="card-contact" title="お問い合わせ" icon="mail">
-        <p className="text-sm text-gray-700 dark:text-gray-300">
-          不具合報告・ご意見はGitHubのIssueよりお願いいたします。
-        </p>
+        <div className="space-y-3">
+          <p className="text-sm text-gray-700 dark:text-gray-300">
+            不具合報告・ご意見はGitHubのIssueよりお願いいたします。
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <Link to="/privacy-policy" className="btn-secondary px-3 py-2 text-sm">
+              <span className="material-symbols-outlined text-base">privacy_tip</span>
+              プライバシーポリシー
+            </Link>
+            <Link to="/terms" className="btn-secondary px-3 py-2 text-sm">
+              <span className="material-symbols-outlined text-base">gavel</span>
+              利用規約
+            </Link>
+          </div>
+        </div>
       </Card>
 
       <Card id="card-changelog" title="更新履歴" icon="update">

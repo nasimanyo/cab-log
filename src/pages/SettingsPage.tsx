@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Card from '@/components/Card'
+import LegalLinks from '@/components/LegalLinks'
 import Toast from '@/components/Toast'
 import { useToast } from '@/hooks/useToast'
 import { useAppStore } from '@/store/useAppStore'
@@ -105,6 +106,7 @@ export default function SettingsPage() {
               <span className="material-symbols-outlined">login</span>
               Googleでログイン
             </button>
+            <LegalLinks className="pt-1" />
             {!supabaseAvailable && (
               <p className="text-xs text-gray-400 text-center">
                 Supabase未設定のため現在ログインは利用できません。ゲストとしてローカルにデータが保存されます。

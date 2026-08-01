@@ -10,6 +10,7 @@ const SettingsPage = lazy(() => import('@/pages/SettingsPage'))
 const HelpPage = lazy(() => import('@/pages/HelpPage'))
 const PrivacyPolicyPage = lazy(() => import('@/pages/PrivacyPolicyPage'))
 const TermsPage = lazy(() => import('@/pages/TermsPage'))
+const ContactPage = lazy(() => import('@/pages/ContactPage'))
 
 function PageLoading() {
   return (
@@ -33,6 +34,7 @@ export default function App() {
             <Route path="/help" element={<HelpPage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
             <Route path="/terms" element={<TermsPage />} />
+            <Route path="/contact" element={<ContactPage />} />
           </Route>
         </Routes>
       </Suspense>

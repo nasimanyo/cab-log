@@ -73,9 +73,13 @@ export default function HelpPage() {
       <Card id="card-contact" title="お問い合わせ" icon="mail">
         <div className="space-y-3">
           <p className="text-sm text-gray-700 dark:text-gray-300">
-            不具合報告・ご意見はGitHubのIssueよりお願いいたします。
+            不具合報告・ご意見は下のフォームからお問い合わせいただけます。
           </p>
           <div className="flex flex-wrap gap-2">
+            <Link to="/contact" className="btn-secondary px-3 py-2 text-sm">
+              <span className="material-symbols-outlined text-base">mail</span>
+              お問い合わせフォーム
+            </Link>
             <Link to="/privacy-policy" className="btn-secondary px-3 py-2 text-sm">
               <span className="material-symbols-outlined text-base">privacy_tip</span>
               プライバシーポリシー

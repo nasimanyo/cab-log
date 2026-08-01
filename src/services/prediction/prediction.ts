@@ -14,10 +14,15 @@ import { WEEKDAYS } from '@/types'
 import { ALL_PATTERNS, generatePricesForPattern, SLOT_COUNT, RAW_PATTERN_TO_APP, type RawPattern } from './turnipCalculator'
 
 /** シミュレーション回数(パターンごと)。多いほど精度が上がるが計算コストが増える */
-const SIMULATIONS_PER_PATTERN = 2000
+const SIMULATIONS_PER_PATTERN = 5000
 
 /** 観測値との許容誤差(丸め誤差対策) */
 const TOLERANCE = 0
+
+interface SimulationCandidate {
+  simulation: number[]
+  weight: number
+}
 
 interface SlotObservation {
   index: number // 0-11
@@ -39,13 +44,42 @@ function flattenObservations(prices: WeekPrices): SlotObservation[] {
   return result
 }
 
-function matchesObservations(simulated: number[], observations: SlotObservation[]): boolean {
-  for (const obs of observations) {
-    if (obs.price === null) continue
+function scoreSimulation(simulated: number[], observations: SlotObservation[], buyPrice: number): number {
+  let score = 1
+  const priceScale = Math.max(80, buyPrice * 0.25)
+
+  const knownObservations = observations.filter((obs) => obs.price !== null)
+  for (const obs of knownObservations) {
     const simPrice = simulated[obs.index]
-    if (Math.abs(simPrice - obs.price) > TOLERANCE) return false
+    const observedPrice = obs.price as number
+    const diff = Math.abs(simPrice - observedPrice)
+    if (diff <= TOLERANCE) {
+      score *= 1.35
+      continue
+    }
+
+    const normalizedDiff = diff / priceScale
+    score *= Math.exp(-(normalizedDiff * normalizedDiff) * 2.5)
   }
-  return true
+
+  if (knownObservations.length >= 2) {
+    for (let i = 1; i < knownObservations.length; i++) {
+      const prev = knownObservations[i - 1]
+      const curr = knownObservations[i]
+      const prevSim = simulated[prev.index]
+      const currSim = simulated[curr.index]
+      const observedDelta = (curr.price as number) - (prev.price as number)
+      const simulatedDelta = currSim - prevSim
+
+      if ((observedDelta > 0 && simulatedDelta > 0) || (observedDelta < 0 && simulatedDelta < 0)) {
+        score *= 1.08
+      } else if (observedDelta !== 0 && simulatedDelta !== 0) {
+        score *= 0.92
+      }
+    }
+  }
+
+  return Math.max(1e-6, score)
 }
 
 export interface PredictionInput {
@@ -82,21 +116,20 @@ export function predict(input: PredictionInput): PredictionResult {
   const observations = flattenObservations(prices)
   const hasAnyObservation = observations.some((o) => o.price !== null)
 
-  // マッチしたシミュレーション結果を集める
-  const matchedByPattern: Record<RawPattern, number[][]> = { 0: [], 1: [], 2: [], 3: [] }
-  const countByPattern: Record<RawPattern, number> = { 0: 0, 1: 0, 2: 0, 3: 0 }
+  // 観測価格にどれだけ近いかをスコアリングし、重み付きでパターン確率を算出する
+  const matchedByPattern: Record<RawPattern, SimulationCandidate[]> = { 0: [], 1: [], 2: [], 3: [] }
+  const weightByPattern: Record<RawPattern, number> = { 0: 0, 1: 0, 2: 0, 3: 0 }
 
   for (const pattern of ALL_PATTERNS) {
     for (let i = 0; i < SIMULATIONS_PER_PATTERN; i++) {
       const simulated = generatePricesForPattern(pattern, buyPrice)
-      if (!hasAnyObservation || matchesObservations(simulated, observations)) {
-        matchedByPattern[pattern].push(simulated)
-        countByPattern[pattern]++
-      }
+      const weight = hasAnyObservation ? scoreSimulation(simulated, observations, buyPrice) : 1
+      matchedByPattern[pattern].push({ simulation: simulated, weight })
+      weightByPattern[pattern] += weight
     }
   }
 
-  const totalMatched: number = ALL_PATTERNS.reduce((sum: number, p) => sum + countByPattern[p], 0)
+  const totalMatched: number = ALL_PATTERNS.reduce((sum: number, p) => sum + weightByPattern[p], 0)
 
   if (totalMatched === 0) {
     // 入力に矛盾がある、または極端に稀なケース: 不足データとして扱う
@@ -114,7 +147,7 @@ export function predict(input: PredictionInput): PredictionResult {
   const probabilities = EMPTY_PROBS()
   for (const pattern of ALL_PATTERNS) {
     const appPattern = RAW_PATTERN_TO_APP[pattern]
-    probabilities[appPattern] = Math.round((countByPattern[pattern] / totalMatched) * 1000) / 10
+    probabilities[appPattern] = Math.round((weightByPattern[pattern] / totalMatched) * 1000) / 10
   }
 
   let mostLikelyPattern: PricePattern | null = null
@@ -138,19 +171,19 @@ export function predict(input: PredictionInput): PredictionResult {
 
     let min = Infinity
     let max = -Infinity
-    let sum = 0
-    let n = 0
+    let weightedSum = 0
+    let totalWeight = 0
     for (const pattern of ALL_PATTERNS) {
-      for (const sim of matchedByPattern[pattern]) {
-        const v = sim[slotIdx]
+      for (const candidate of matchedByPattern[pattern]) {
+        const v = candidate.simulation[slotIdx]
         if (v < min) min = v
         if (v > max) max = v
-        sum += v
-        n++
+        weightedSum += v * candidate.weight
+        totalWeight += candidate.weight
       }
     }
-    if (n === 0) continue
-    const avg = Math.round(sum / n)
+    if (totalWeight === 0) continue
+    const avg = Math.round(weightedSum / totalWeight)
     forecast.push({ day: obs.day, period: obs.period, minPrice: min, maxPrice: max, avgPrice: avg })
 
     if (bestPrice === null || max > bestPrice) {

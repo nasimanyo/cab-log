@@ -27,13 +27,23 @@ export function getSellAdvice(currentPrice: number | null, buyPrice: number | nu
     }
   }
 
-  const { bestPrice, bestDay, bestPeriod, mostLikelyPattern } = prediction
+  const { bestPrice, bestDay, bestPeriod, mostLikelyPattern, probabilities } = prediction
+
+  const probability = probabilities[mostLikelyPattern ?? 'fluctuating'] ?? 0
 
   // 現在価格が既に最高予想価格に近い、または今が最高値の場合
   if (bestPrice !== null && currentPrice >= bestPrice * 0.95) {
     return {
       judgement: 'sell',
       reason: '現在の価格はこの先の予想最高値に近い水準です。今売るのがおすすめです。',
+      recommendedTiming: '今すぐ'
+    }
+  }
+
+  if (mostLikelyPattern === 'large_spike' && probability >= 35 && currentPrice >= buyPrice * 1.1) {
+    return {
+      judgement: 'sell',
+      reason: '大型跳ね型の可能性が高く、すでに上昇基調に入っているため売りのチャンスです。',
       recommendedTiming: '今すぐ'
     }
   }
@@ -52,6 +62,13 @@ export function getSellAdvice(currentPrice: number | null, buyPrice: number | nu
       return {
         judgement: 'wait',
         reason: `まだ購入価格を下回っています。${timing}頃に高値が期待できます。`,
+        recommendedTiming: timing
+      }
+    }
+    if (currentPrice >= buyPrice * 1.2) {
+      return {
+        judgement: 'caution',
+        reason: `現在の価格は購入価格をかなり上回っています。${timing}頃の高値を狙う場合は慎重に判断してください。`,
         recommendedTiming: timing
       }
     }
